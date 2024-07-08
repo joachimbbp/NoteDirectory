@@ -1,11 +1,17 @@
 import os
+
 vault = "/Users/joachimpfefferkorn/Obsidian/Main Vault"
 daily_notes_aggregated = "/Users/joachimpfefferkorn/Obsidian/Main Vault/daily_notes.md"
+footer_path = "/Users/joachimpfefferkorn/repos/daily_note_organizer/footer.md"
 daily_notes = []
 years = []
 months = []
-# daily notes look like this: 2023-01-17.md
 
+
+with open(footer_path, 'r') as footer_file:
+    footer = footer_file.read()
+
+# daily notes look like this: 2023-01-17.md
 def month_writer(daily_note: str) -> str:
     month_num = daily_note[5:7]
     match month_num:
@@ -55,3 +61,4 @@ with open(daily_notes_aggregated, 'w') as obsidian_note:
         print("note link added: ", note_link)
         obsidian_note.write(note_link)
         obsidian_note.write("\n")
+    obsidian_note.write(footer)
