@@ -18,7 +18,7 @@ def month_writer(daily_note: str) -> str:
         case "01":
             return "January"
         case "02":
-            return "Febraury"
+            return "February"
         case "03":
             return "March"
         case "04":
