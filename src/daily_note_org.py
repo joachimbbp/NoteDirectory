@@ -1,8 +1,11 @@
 import os
+from functions import summarize
 
-vault = "/Users/joachimpfefferkorn/Obsidian/Main Vault"
-daily_notes_aggregated = "/Users/joachimpfefferkorn/Obsidian/Main Vault/daily_notes.md"
+vault = "/Users/joachimpfefferkorn/Obsidian/Main_Vault"
+daily_notes_aggregated = "/Users/joachimpfefferkorn/Obsidian/Main_Vault/daily_notes.md"
 footer_path = "/Users/joachimpfefferkorn/repos/daily_note_organizer/footer.md"
+#TODO Dry these paths
+
 daily_notes = []
 years = []
 months = []
@@ -58,7 +61,19 @@ with open(daily_notes_aggregated, 'w') as obsidian_note:
             months.append(sorted_note[0:7])
 
         note_link = "[[{note_link}]]".format(note_link = sorted_note[:-3])
-        print("note link added: ", note_link)
+
+        note_path = os.path.join(vault, sorted_note)
+
+        print("note added: ", note_link)
+
+        note_summary = summarize(note_path)
+        print(note_summary)
+
         obsidian_note.write(note_link)
+        obsidian_note.write(note_summary)#TODO here you put the summary
         obsidian_note.write("\n")
+
+        #TODO don't repeat this generation unless prompted to (as in the case of a better model)
     obsidian_note.write(footer)
+
+    #NOTE backed up in time machine at 7:21, sync turned off at 8:02 PM on sept 10
