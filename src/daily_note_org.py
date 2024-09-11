@@ -70,6 +70,7 @@ with open(daily_notes_aggregated, 'w') as obsidian_note:
         print(note_summary)
 
         obsidian_note.write(note_link)
+        obsidian_note.write("\n")
         obsidian_note.write(note_summary)#TODO here you put the summary
         obsidian_note.write("\n")
 
