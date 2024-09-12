@@ -1,33 +1,58 @@
-from transformers import pipeline
+import markdown
+import re
+from bs4 import BeautifulSoup
+#from transformers import pipeline, AutoTokenizer
 
+def md_to_plaintext(md):
+    html = markdown.markdown(md)
+    html = re.sub(r'<pre>(.*?)</pre>', ' ', html)
+    html = re.sub(r'<code>(.*?)</code >', ' ', html)
 
-def clean_md_line(md):
-    line = ""
-    for char in md:
-        if char.isalpha() or char == " ":
-            line += char
-    return line
-
-def summarize(md_path):
-    #just cleaning it now to debug
-    summarizer = pipeline("summarization", model="Falconsai/text_summarization")
+    # extract text
+    soup = BeautifulSoup(html, "html.parser")
+    text = ''.join(soup.findAll(text=True))
     cleaned = ""
-    with open(md_path, 'r') as md:
-        for line in md:
-            cleaned += clean_md_line(line)
-            cleaned += "\n"
-    max_input_length = 1024
-    truncated_cleaned = cleaned[:max_input_length] #TODO make this somehow longer, or include salient parts, perhaps manual parsing
+    for char in text:
+        if char != "[" and char != "]":
+            cleaned += char
+    return cleaned
+
+def summarize(md_path, summarizer, tokenizer):
+
+    with open(md_path, 'r') as NOTE:
+        text = md_to_plaintext(NOTE.read())
+        tokens = tokenizer(text)
+        num_tokens = len(tokens['input_ids'])
+
+    return summarizer(text, max_length=num_tokens, min_length=30, do_sample=False)
 
 
-    # if max < 5:
-    #     max = 5 #you can clean this code up tbh
-    #     #INVESTIGATE You should consider increasing `max_length` or, better yet, setting `max_new_tokens`
-
-    # #print(f"max: {max}, cleaned: {len(cleaned)}")
-
-    #TODO Token indices sequence length is longer than the specified maximum sequence length for this model (1995 > 1024). Running this sequence through the model will result in indexing errors 
-    summary = summarizer(cleaned, max_length=130, min_length=30, do_sample=False)
-    return summary[0]['summary_text']
-
-
+def month_writer(daily_note: str) -> str:
+    month_num = daily_note[5:7]
+    match month_num:
+        case "01":
+            return "January"
+        case "02":
+            return "February"
+        case "03":
+            return "March"
+        case "04":
+            return "April"
+        case "05":
+            return "May"
+        case "06":
+            return "June"
+        case "07":
+            return "July"
+        case "08":
+            return "August"
+        case "09":
+            return "September"
+        case "10":
+            return "October"
+        case "11":
+            return "November"
+        case "12":
+            return "December"
+        case _ :
+            return "Error defining month"

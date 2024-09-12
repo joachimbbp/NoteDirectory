@@ -1,49 +1,25 @@
 import os
-from functions import summarize
+from functions import summarize, month_writer
+from transformers import pipeline, AutoTokenizer
 
+
+#PATHS
 vault = "/Users/joachimpfefferkorn/Obsidian/Main_Vault"
 daily_notes_aggregated = "/Users/joachimpfefferkorn/Obsidian/Main_Vault/daily_notes.md"
 footer_path = "/Users/joachimpfefferkorn/repos/daily_note_organizer/footer.md"
 #TODO Dry these paths
 
+#AI STUFF
+model_name = "knkarthick/MEETING_SUMMARY"
+summarizer = pipeline("summarization", model=model_name)
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+
+#INIT
 daily_notes = []
 years = []
 months = []
-
-
 with open(footer_path, 'r') as footer_file:
     footer = footer_file.read()
-
-# daily notes look like this: 2023-01-17.md
-def month_writer(daily_note: str) -> str:
-    month_num = daily_note[5:7]
-    match month_num:
-        case "01":
-            return "January"
-        case "02":
-            return "February"
-        case "03":
-            return "March"
-        case "04":
-            return "April"
-        case "05":
-            return "May"
-        case "06":
-            return "June"
-        case "07":
-            return "July"
-        case "08":
-            return "August"
-        case "09":
-            return "September"
-        case "10":
-            return "October"
-        case "11":
-            return "November"
-        case "12":
-            return "December"
-        case _ :
-            return "Error defining month"
 
 for note in os.listdir(vault):
     if note[:2] == "20" and note[4] == "-" and note[7] == "-":
@@ -66,7 +42,8 @@ with open(daily_notes_aggregated, 'w') as obsidian_note:
 
         print("note added: ", note_link)
 
-        note_summary = summarize(note_path)
+        note_summary = summarize(note_path, summarizer, tokenizer)[0]['summary_text']
+        print("summarization result: ", summarize(note_path, summarizer, tokenizer))
         print(note_summary)
 
         obsidian_note.write(note_link)
