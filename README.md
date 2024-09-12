@@ -14,3 +14,7 @@ I recommend **pausing obsidian sync before running this script**
 - [ ] Get rid of virtual environment
 - [ ] Make portable
 - [ ] Auto install on path
+
+
+# Thoughts On Summarizer
+- Perhaps we should start by splitting into two sections along the biggest notes, drill down from there?
