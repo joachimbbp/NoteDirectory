@@ -29,7 +29,6 @@ def summarize(md_path, summarizer, tokenizer):
 def summarize_string(text, summarizer, tokenizer):
     tokens = tokenizer(text)
     num_tokens = len(tokens['input_ids'])
-
     return summarizer(text, max_length=num_tokens, min_length=30, do_sample=False)
 
 def month_writer(daily_note: str) -> str:
