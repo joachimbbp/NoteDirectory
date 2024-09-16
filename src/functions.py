@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 import numpy as np
 from transformers import pipeline, AutoTokenizer
 from classes import TextSummary
+import os
 
 # model_name = "knkarthick/MEETING_SUMMARY"
 # summarizer = pipeline("summarization", model=model_name)
@@ -101,3 +102,38 @@ def summarize_sections(note_sections):
         summary += section.summarize_and_clean() + "\n"
         #summary += summarize_string(section.content, summarizer, tokenizer)['summary_text'] + "\n"
     return summary
+
+
+def create_note_summary(note_path):
+    print()
+    prepared_note = prepare_note(str(note_path))
+    note_sections = []
+    og_section = TextSummary(prepared_note)
+    split_amount = 1
+    def recursive_split(input_section, split_amount):
+
+        if input_section.num_tokens > input_section.tokenizer.model_max_length and split_amount < 99:
+            split_amount += 1
+            print(f"🐘 Original section must be split by {split_amount}! Section tokens: {input_section.num_tokens} Max model length: {input_section.tokenizer.model_max_length}")
+            new_sections = split(og_section, split_amount)
+            print(f"🪸 New sections updated with split subsections, 🔃 recursively split is recursing")
+            for i, subsection in enumerate(new_sections):
+                print(f"⚔️ Splitting subsection {i}")
+                recursive_split(subsection, split_amount)
+        else:
+            print(f"🦋 Section is small enough!")
+            print(f"🏄 Small enough section added to new_sections")
+            note_sections.append(input_section)
+            return 0
+
+    recursive_split(og_section, split_amount)
+    print(f"🏭 Summarizing {os.path.basename(note_path)}")
+    summary = summarize_sections(note_sections)
+    return summary
+
+def is_daily_note(note):
+    if note[:2] == "20" and note[4] == "-" and note[7] == "-":
+        return True
+    else:
+        return False
+    #You could code golf this to one line but I find this more readable

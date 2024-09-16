@@ -1,10 +1,12 @@
 from transformers import pipeline, AutoTokenizer
+import torch
 
 class TextSummary:
     def __init__(self, content):
         #AI
         self.model_name = "knkarthick/MEETING_SUMMARY"
-        self.summarizer = pipeline("summarization", self.model_name)
+        self.device = 0 if torch.cuda.is_available() else -1  # Use GPU if available GPT
+        self.summarizer = pipeline("summarization", self.model_name, device=self.device)
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
         #Text Content
         self.content = content

@@ -1,80 +1,91 @@
 import os
-from functions import *
-from transformers import pipeline, AutoTokenizer
+from functions import * #TODO select only necessary functions
 from classes import TextSummary
+import collections
 
-#PATHS
+#TODO make Command line argument
+regenerate_cache = True
+add_to_cache = True
+
+#TODO Dry these paths, make relative, eventually move to a JSON file
 vault = "/Users/joachimpfefferkorn/Obsidian/Main_Vault"
 daily_notes_aggregated = "/Users/joachimpfefferkorn/Obsidian/Main_Vault/daily_notes.md"
 footer_path = "/Users/joachimpfefferkorn/repos/daily_note_organizer/footer.md"
-#TODO Dry these paths
+cache_folder = "/Users/joachimpfefferkorn/repos/daily_note_organizer/cache"
+
 
 #INIT
-daily_notes = []
 years = []
 months = []
+
+empty_tag = "$empty_note_summary$"
+
 with open(footer_path, 'r') as footer_file:
-    footer = footer_file.read()
+    footer = footer_file.read() #TODO update footer
 
-for note in os.listdir(vault):
-    if note[:2] == "20" and note[4] == "-" and note[7] == "-":
-        daily_notes.append(note)
-daily_notes.sort()
-print(daily_notes)
+if not regenerate_cache:
+    print("💾 Reading in existing cache")
+    with open(f"{cache_folder}/summarized_note_cache.txt", 'w') as summarized_note_cache: #TODO pickle or JSON?
+        unordered_note_summaries = summarized_note_cache.read()
+else:
+    print("🦎 Regenerating entire cache")
+    unordered_note_summaries = {}
 
+for note in os.listdir(vault): #TODO test this edge case
+    if is_daily_note(note) and note not in unordered_note_summaries:
+        print(f"🧩 Adding empty entry for {note} (these will be summarized later)")
+        unordered_note_summaries[note] = empty_tag
+note_summaries = collections.OrderedDict(sorted(unordered_note_summaries.items()))
+print("📚 Note summary dictionary sorted:")
 
-def create_note_summary(note_path):
-    prepared_note = prepare_note(str(note_path))
-    note_sections = []
-    og_section = TextSummary(prepared_note)
-    split_amount = 1
-    def recursive_split(input_section, split_amount):
+iterator = 0
+for note, summary in note_summaries.items():
+    iterator += 1
+    print(f"\n🦕 Checking note {iterator} out of {len(note_summaries)}")
+    if summary == empty_tag:
+        print(f"🧙 creating note summary for {note}")
+        note_summaries[note] = create_note_summary(f"{vault}/{note}")
+    else:
+        print("🕶️ Note summary already present")
+    print("📑", note)
+    print("📝 ", summary)
 
-        if input_section.num_tokens > input_section.tokenizer.model_max_length and split_amount < 99:
-            split_amount += 1
-            print(f"🐘 Original section must be split by {split_amount}! Section tokens: {input_section.num_tokens} Max model length: {input_section.tokenizer.model_max_length}")
-            new_sections = split(og_section, split_amount)
-            print(f"🪸 New sections updated with split subsections, 🔃 recursively split is recursing")
-            for i, subsection in enumerate(new_sections):
-                print(f"⚔️ Splitting subsection {i}")
-                recursive_split(subsection, split_amount)
-        else:
-            print(f"🦋 Section is small enough!")
-            print(f"🏄 Small enough section added to new_sections")
-            note_sections.append(input_section)
-            return 0
-
-    recursive_split(og_section, split_amount)
-    print(f"🏭 Summarizing {os.path.basename(note_path)}")
-    summary = summarize_sections(note_sections)
-    return summary
+if regenerate_cache or add_to_cache:
+    print("💿 Saving cache")
+    summarized_note_cache = note_summaries
 
 
-with open(daily_notes_aggregated, 'w') as obsidian_note:
-    for sorted_note in daily_notes: 
-        if sorted_note[0:4] not in years:
-            obsidian_note.write("# {year}\n".format(year = sorted_note[0:4]))
-            years.append(sorted_note[0:4])
-        if sorted_note[0:7] not in months:
-            obsidian_note.write("## {month}\n".format(month = month_writer(sorted_note)))
-            months.append(sorted_note[0:7])
 
-        note_link = "[[{note_link}]]".format(note_link = sorted_note[:-3])
 
-        note_path = os.path.join(vault, sorted_note)
 
-        print("📝 Note Added: ", note_link)
 
-        note_summary = create_note_summary(note_path)
-        print("📖 Summarization Result: ",)
-        print(note_summary)
+# with open(daily_notes_aggregated, 'w') as obsidian_note:
+#     #TODO now this sorts through 
+#     for sorted_note in daily_notes: 
+#         if sorted_note[0:4] not in years:
+#             print(f"🗓️ Adding {sorted_note[0:4]}")
+#             obsidian_note.write("# {year}\n".format(year = sorted_note[0:4]))
+#             years.append(sorted_note[0:4])
+#         if sorted_note[0:7] not in months:
+#             month = month_writer(sorted_note)
+#             print(f"Adding {month}")
+#             obsidian_note.write("## {month}\n".format(month = month))
+#             months.append(sorted_note[0:7])
 
-        obsidian_note.write(note_link)
-        obsidian_note.write("\n")
-        obsidian_note.write(note_summary)
-        obsidian_note.write("\n")
+#         note_link = "[[{note_link}]]".format(note_link = sorted_note[:-3])
+#         note_path = os.path.join(vault, sorted_note)
+#         print("📝 Note Added: ", note_link)
 
-        #TODO don't repeat this generation unless prompted to (as in the case of a better model)
-    obsidian_note.write(footer)
+#         note_summary = create_note_summary(note_path)
+#         print("📖 Summarization Result: ",)
+#         print(note_summary)
 
-    #NOTE backed up in time machine at 7:21, sync turned off at 8:02 PM on sept 10
+#         obsidian_note.write(note_link)
+#         obsidian_note.write("\n")
+#         obsidian_note.write(note_summary)
+#         obsidian_note.write("\n")
+
+#         #TODO don't repeat this generation unless prompted to (as in the case of a better model)
+#     obsidian_note.write(footer)
+
+#     #NOTE backed up in time machine at 7:21, sync turned off at 8:02 PM on sept 10
