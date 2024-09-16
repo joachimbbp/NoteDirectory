@@ -59,33 +59,33 @@ if regenerate_cache or add_to_cache:
 
 
 
-# with open(daily_notes_aggregated, 'w') as obsidian_note:
-#     #TODO now this sorts through 
-#     for sorted_note in daily_notes: 
-#         if sorted_note[0:4] not in years:
-#             print(f"🗓️ Adding {sorted_note[0:4]}")
-#             obsidian_note.write("# {year}\n".format(year = sorted_note[0:4]))
-#             years.append(sorted_note[0:4])
-#         if sorted_note[0:7] not in months:
-#             month = month_writer(sorted_note)
-#             print(f"Adding {month}")
-#             obsidian_note.write("## {month}\n".format(month = month))
-#             months.append(sorted_note[0:7])
+with open(daily_notes_aggregated, 'w') as dailynote_file:
+    #TODO now this sorts through 
+    for sorted_note in daily_notes: 
+        if sorted_note[0:4] not in years:
+            print(f"🗓️ Adding {sorted_note[0:4]}")
+            dailynote_file.write("# {year}\n".format(year = sorted_note[0:4]))
+            years.append(sorted_note[0:4])
+        if sorted_note[0:7] not in months:
+            month = month_writer(sorted_note)
+            print(f"Adding {month}")
+            dailynote_file.write("## {month}\n".format(month = month))
+            months.append(sorted_note[0:7])
 
-#         note_link = "[[{note_link}]]".format(note_link = sorted_note[:-3])
-#         note_path = os.path.join(vault, sorted_note)
-#         print("📝 Note Added: ", note_link)
+        note_link = "[[{note_link}]]".format(note_link = sorted_note[:-3])
+        note_path = os.path.join(vault, sorted_note)
+        print("📝 Note Added: ", note_link)
 
-#         note_summary = create_note_summary(note_path)
-#         print("📖 Summarization Result: ",)
-#         print(note_summary)
+        note_summary = create_note_summary(note_path)
+        print("📖 Summarization Result: ",)
+        print(note_summary)
 
-#         obsidian_note.write(note_link)
-#         obsidian_note.write("\n")
-#         obsidian_note.write(note_summary)
-#         obsidian_note.write("\n")
+        dailynote_file.write(note_link)
+        dailynote_file.write("\n")
+        dailynote_file.write(note_summary)
+        dailynote_file.write("\n")
 
-#         #TODO don't repeat this generation unless prompted to (as in the case of a better model)
-#     obsidian_note.write(footer)
+        #TODO don't repeat this generation unless prompted to (as in the case of a better model)
+    dailynote_file.write(footer)
 
-#     #NOTE backed up in time machine at 7:21, sync turned off at 8:02 PM on sept 10
+    #NOTE backed up in time machine at 7:21, sync turned off at 8:02 PM on sept 10

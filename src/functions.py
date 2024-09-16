@@ -105,7 +105,6 @@ def summarize_sections(note_sections):
 
 
 def create_note_summary(note_path):
-    print()
     prepared_note = prepare_note(str(note_path))
     note_sections = []
     og_section = TextSummary(prepared_note)
