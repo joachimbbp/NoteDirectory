@@ -26,7 +26,12 @@ def md_to_plaintext(md):
     return cleaned
 
 
-
+def clean_md(md_content: str):
+    clean_note = md_content
+    clean_note = clean_note.replace('- [x]', 'Completed:').replace('- [ ]','To Do:')
+    clean_note = clean_note.replace('[[', '').replace(']]','')
+    clean_note = clean_note.replace('![[', 'Image file:')
+    return clean_note
 
 
 def month_writer(daily_note: str) -> str:
@@ -60,12 +65,7 @@ def month_writer(daily_note: str) -> str:
             return "Error defining month"
 
 
-def clean_md(md_content: str):
-    clean_note = md_content
-    clean_note = clean_note.replace('- [x]', 'Completed:').replace('- [ ]','To Do:')
-    clean_note = clean_note.replace('[[', '').replace(']]','')
-    clean_note = clean_note.replace('![[', 'Image file:')
-    return clean_note
+
 
 def prepare_note(md_path):
     with open(md_path, 'r') as note:
@@ -98,6 +98,6 @@ def summarize_sections(note_sections):
     summary = ""
     for i, section in enumerate(note_sections):
         print(f"📇 Summarizing section {i} out of {len(note_sections)}")
-        summary += section.summarize_content() + "\n"
+        summary += section.summarize_and_clean() + "\n"
         #summary += summarize_string(section.content, summarizer, tokenizer)['summary_text'] + "\n"
     return summary
