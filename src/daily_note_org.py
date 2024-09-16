@@ -1,7 +1,7 @@
 import os
 from functions import *
 from transformers import pipeline, AutoTokenizer
-from classes import Section
+from classes import TextSummary
 
 #PATHS
 vault = "/Users/joachimpfefferkorn/Obsidian/Main_Vault"
@@ -9,17 +9,7 @@ daily_notes_aggregated = "/Users/joachimpfefferkorn/Obsidian/Main_Vault/daily_no
 footer_path = "/Users/joachimpfefferkorn/repos/daily_note_organizer/footer.md"
 #TODO Dry these paths
 
-#AI STUFF
-model_name = "knkarthick/MEETING_SUMMARY"
-summarizer = pipeline("summarization", model=model_name)
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-
-# class Section:
-#     def __init__(self, content):
-#         self.content = content
-#         self.tokens = tokenizer(content)
-#         self.num_tokens = len(self.tokens['input_ids']) #TODO there is a direct way to get these, slight hack for now
-# #INIT
+#INIT
 daily_notes = []
 years = []
 months = []
@@ -36,13 +26,13 @@ print(daily_notes)
 def create_note_summary(note_path):
     prepared_note = prepare_note(str(note_path))
     note_sections = []
-    og_section = Section(prepared_note)
+    og_section = TextSummary(prepared_note)
     split_amount = 1
     def recursive_split(input_section, split_amount):
 
-        if input_section.num_tokens > tokenizer.model_max_length and split_amount < 99:
+        if input_section.num_tokens > input_section.tokenizer.model_max_length and split_amount < 99:
             split_amount += 1
-            print(f"🐘 Original section must be split by {split_amount}! Section tokens: {input_section.num_tokens} Max model length: {tokenizer.model_max_length}")
+            print(f"🐘 Original section must be split by {split_amount}! Section tokens: {input_section.num_tokens} Max model length: {input_section.tokenizer.model_max_length}")
             new_sections = split(og_section, split_amount)
             print(f"🪸 New sections updated with split subsections, 🔃 recursively split is recursing")
             for i, subsection in enumerate(new_sections):
@@ -73,7 +63,7 @@ with open(daily_notes_aggregated, 'w') as obsidian_note:
 
         note_path = os.path.join(vault, sorted_note)
 
-        print("note added: ", note_link)
+        print("📝 Note Added: ", note_link)
 
         note_summary = create_note_summary(note_path)
         print("📖 Summarization Result: ",)

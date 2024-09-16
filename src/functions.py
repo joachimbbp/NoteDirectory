@@ -3,11 +3,11 @@ import re
 from bs4 import BeautifulSoup
 import numpy as np
 from transformers import pipeline, AutoTokenizer
-from classes import Section
+from classes import TextSummary
 
-model_name = "knkarthick/MEETING_SUMMARY"
-summarizer = pipeline("summarization", model=model_name)
-tokenizer = AutoTokenizer.from_pretrained(model_name)
+# model_name = "knkarthick/MEETING_SUMMARY"
+# summarizer = pipeline("summarization", model=model_name)
+# tokenizer = AutoTokenizer.from_pretrained(model_name)
 
 
 
@@ -25,19 +25,9 @@ def md_to_plaintext(md):
             cleaned += char
     return cleaned
 
-def summarize(md_path, summarizer, tokenizer):
 
-    with open(md_path, 'r') as NOTE:
-        text = md_to_plaintext(NOTE.read())
-        tokens = tokenizer(text)
-        num_tokens = len(tokens['input_ids'])
 
-    return summarizer(text, max_length=num_tokens, min_length=30, do_sample=False)
 
-def summarize_string(text, summarizer, tokenizer):
-    tokens = tokenizer(text)
-    num_tokens = len(tokens['input_ids'])
-    return summarizer(text, max_length=num_tokens, min_length=30, do_sample=False)
 
 def month_writer(daily_note: str) -> str:
     month_num = daily_note[5:7]
@@ -83,7 +73,7 @@ def prepare_note(md_path):
         cleaned_md = clean_md(md_content)
         return cleaned_md
     
-def split(section: Section, amount: int):
+def split(section: TextSummary, amount: int):
     lines = np.asarray(section.content.split("\n"), dtype=str)
 
     sub_arrays = np.array_split(lines, amount)
@@ -94,24 +84,20 @@ def split(section: Section, amount: int):
         text = "\n".join(array)
     # then a section
     #add each section to a list
-        sections.append(Section(text))
+        sections.append(TextSummary(text))
     return sections
 
 def biggest_section(sections):
-    biggest_section = Section("")
+    biggest_section = TextSummary("")
     for section in sections:
         if section.num_tokens > biggest_section.num_tokens:
             biggest_section = section
     return biggest_section
 
-
-
-    
-
 def summarize_sections(note_sections):
     summary = ""
     for i, section in enumerate(note_sections):
         print(f"📇 Summarizing section {i} out of {len(note_sections)}")
-        summary += summarize_string(section.content, summarizer, tokenizer)[0]['summary_text'] + "\n"
+        summary += section.summarize_content() + "\n"
         #summary += summarize_string(section.content, summarizer, tokenizer)['summary_text'] + "\n"
     return summary
