@@ -111,7 +111,7 @@ def biggest_section(sections):
 def summarize_sections(note_sections):
     summary = ""
     for i, section in enumerate(note_sections):
-        print(f"📇 Summarizing section {i}")
+        print(f"📇 Summarizing section {i} out of {len(note_sections)}")
         summary += summarize_string(section.content, summarizer, tokenizer)[0]['summary_text'] + "\n"
         #summary += summarize_string(section.content, summarizer, tokenizer)['summary_text'] + "\n"
     return summary

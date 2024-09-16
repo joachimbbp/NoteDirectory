@@ -37,6 +37,7 @@ def create_note_summary(note_path):
     prepared_note = prepare_note(str(note_path))
     note_sections = []
     og_section = Section(prepared_note)
+    split_amount = 1
     def recursive_split(input_section, split_amount):
 
         if input_section.num_tokens > tokenizer.model_max_length and split_amount < 99:
@@ -53,9 +54,8 @@ def create_note_summary(note_path):
             note_sections.append(input_section)
             return 0
 
-    split_amount = 1
-
     recursive_split(og_section, split_amount)
+    print(f"🏭 Summarizing {os.path.basename(note_path)}")
     summary = summarize_sections(note_sections)
     return summary
 
