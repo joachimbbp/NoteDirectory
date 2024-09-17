@@ -16,7 +16,6 @@ cache_folder = "/Users/joachimpfefferkorn/repos/daily_note_organizer/cache"
 
 empty_tag = "$empty_note_summary$"
 
-
 if not regenerate_entire_cache:
     print("💾 Reading in existing cache")
     with open(f"{cache_folder}/summarized_note_cache.json", 'r') as summarized_note_cache: #TODO pickle or JSON?
@@ -58,10 +57,9 @@ with open(f"{cache_folder}/summarized_note_cache.json", 'r') as summarized_note_
     note_summary_dict = json.loads(summarized_note_cache.read())
 
 
-
 years = []
 months = []
-print("🐦‍🔥 Creating Obisidian note of all daily notes and their summaries")
+print("🪨 Creating Obsidian note of all daily notes and their summaries")
 with open(daily_notes_aggregated, 'w') as dailynote_file:
     for note in note_summary_dict:
         if note[0:4] not in years:
@@ -82,3 +80,4 @@ with open(daily_notes_aggregated, 'w') as dailynote_file:
         dailynote_file.write(note_summary_dict[note])
         print(f"📝 Summary Added:\n{note_summary_dict[note]}")
         dailynote_file.write("\n")
+print("🍾 Done!")
