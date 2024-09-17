@@ -4,13 +4,7 @@ from bs4 import BeautifulSoup
 import numpy as np
 from transformers import pipeline, AutoTokenizer
 from classes import TextSummary
-import os
-
-# model_name = "knkarthick/MEETING_SUMMARY"
-# summarizer = pipeline("summarization", model=model_name)
-# tokenizer = AutoTokenizer.from_pretrained(model_name)
-
-
+import os, os.path
 
 def md_to_plaintext(md):
     html = markdown.markdown(md)
@@ -26,14 +20,12 @@ def md_to_plaintext(md):
             cleaned += char
     return cleaned
 
-
 def clean_md(md_content: str):
     clean_note = md_content
     clean_note = clean_note.replace('- [x]', 'Completed:').replace('- [ ]','To Do:')
     clean_note = clean_note.replace('[[', '').replace(']]','')
     clean_note = clean_note.replace('![[', 'Image file:')
     return clean_note
-
 
 def month_writer(daily_note: str) -> str:
     month_num = daily_note[5:7]
@@ -99,15 +91,24 @@ def summarize_sections(note_sections):
     summary = ""
     for i, section in enumerate(note_sections):
         print(f"📇 Summarizing section {i} out of {len(note_sections)}")
-        summary += section.summarize_and_clean() + "\n"
-        #summary += summarize_string(section.content, summarizer, tokenizer)['summary_text'] + "\n"
+        summary += section.summarize_and_clean()
     return summary
 
 
-def create_note_summary(note_path):
+def create_note_summary(note_path, max_note_length):
     prepared_note = prepare_note(str(note_path))
     note_sections = []
     og_section = TextSummary(prepared_note)
+    og_section_len = len(og_section.content)
+    if og_section_len > max_note_length:
+        length_error_message = f"Note's length of {og_section_len} chars exceeds summarization bot's max length of {max_note_length}."
+        print("☣️ ",length_error_message)
+        return length_error_message
+    if og_section_len == 0:
+        print("🫙 Note is empty. Adding 'Empty Note' summarization text")
+        return "Empty note"
+    
+    print(f"🧙 creating note summary for {os.path.basename(note_path)}")
     split_amount = 1
     def recursive_split(input_section, split_amount):
 

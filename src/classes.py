@@ -20,9 +20,9 @@ class TextSummary:
     def clean_content(self):
         print("🧼 cleaning summarized note for markdown formatting")
         clean_summary = self.content
-        replacement_table = {'[':'',']':'','#':'','`':'','*':'','-':'','$':'','\n':' '} #not sure if this is better than the naive way tbh
-        for entry in replacement_table:
-            clean_summary = clean_summary.replace(entry, replacement_table[entry])
+        dirty_chars = {'[',']','#','`','*','-','$','\n','<','>'}
+        for entry in dirty_chars:
+            clean_summary = clean_summary.replace(entry, ' ')
         self.content = clean_summary
         return self.content
     
