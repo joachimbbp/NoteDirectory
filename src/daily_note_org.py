@@ -11,7 +11,6 @@ vault = "/Users/joachimpfefferkorn/Obsidian/Main_Vault"
 
 #TODO Dry these paths, make relative
 daily_notes_aggregated = "/Users/joachimpfefferkorn/Obsidian/Main_Vault/daily_notes.md"
-footer_path = "/Users/joachimpfefferkorn/repos/daily_note_organizer/footer.md"
 cache_folder = "/Users/joachimpfefferkorn/repos/daily_note_organizer/cache"
 
 empty_tag = "$empty_note_summary$"
