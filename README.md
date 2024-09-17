@@ -11,11 +11,4 @@ Note that **this project currently uses all hard coded paths** and will have to 
 I recommend **pausing obsidian sync before running this script**
 
 ## To-Do
-- [ ] add `<` and `>` to sanitized note list
-- [ ] Fix indentation issues
-- [ ] Reintegrate into main python file
-- [ ] Cleanup
-
-- [ ] Check max lengths and reinstate extra long notes
 - [ ] Use a different model for code summary
-- [ ] Cap maximum summary length 
