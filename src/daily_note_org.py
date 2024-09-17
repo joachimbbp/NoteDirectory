@@ -5,7 +5,7 @@ import collections
 import json
 
 #Future CLI #TODO
-regenerate_entire_cache = True
+regenerate_entire_cache = False
 max_note_length = 5000
 vault = "/Users/joachimpfefferkorn/Obsidian/Main_Vault"
 
@@ -29,6 +29,7 @@ for note in os.listdir(vault): #TODO test this edge case
     if is_daily_note(note) and note not in unordered_note_summaries:
         print(f"🧩 Adding empty entry for {note} (these will be summarized later)")
         unordered_note_summaries[note] = empty_tag
+
 note_summaries = collections.OrderedDict(sorted(unordered_note_summaries.items()))
 print("📚 Note summary dictionary sorted")
 
@@ -46,11 +47,11 @@ for note, summary in note_summaries.items():
     print("📝 ", note_summaries[note])
 
 
-if regenerate_entire_cache:
-    print("💿 Saving cache")
-    json_cache = json.dumps(note_summaries, sort_keys=True, indent=4)
-    with open(f"{cache_folder}/summarized_note_cache.json", 'w') as summarized_note_cache:
-        summarized_note_cache.write(json_cache)
+
+print("💿 Saving cache")
+json_cache = json.dumps(note_summaries, sort_keys=True, indent=4)
+with open(f"{cache_folder}/summarized_note_cache.json", 'w') as summarized_note_cache:
+    summarized_note_cache.write(json_cache)
 
 print("💾 Reading in newly updated cache")
 with open(f"{cache_folder}/summarized_note_cache.json", 'r') as summarized_note_cache:
