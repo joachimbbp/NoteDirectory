@@ -8,6 +8,11 @@ package-mode =  false
 
 [tool.poetry.dependencies]
 python = "^3.11"
+torch = "^2.4.1"
+transformers = "^4.44.2"
+jupyter = "^1.1.1"
+bs4 = "^0.0.2"
+markdown = "^3.7"
 
 
 [build-system]

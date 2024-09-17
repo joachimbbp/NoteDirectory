@@ -1,64 +1,83 @@
 import os
+from functions import * #TODO select only necessary functions
+from classes import TextSummary
+import collections
+import json
 
-vault = "/Users/joachimpfefferkorn/Obsidian/Main Vault"
-daily_notes_aggregated = "/Users/joachimpfefferkorn/Obsidian/Main Vault/daily_notes.md"
+#Future CLI #TODO
+regenerate_entire_cache = False
+max_note_length = 5000
+vault = "/Users/joachimpfefferkorn/Obsidian/Main_Vault"
+
+#TODO Dry these paths, make relative
+daily_notes_aggregated = "/Users/joachimpfefferkorn/Obsidian/Main_Vault/daily_notes.md"
 footer_path = "/Users/joachimpfefferkorn/repos/daily_note_organizer/footer.md"
-daily_notes = []
+cache_folder = "/Users/joachimpfefferkorn/repos/daily_note_organizer/cache"
+
+empty_tag = "$empty_note_summary$"
+
+if not regenerate_entire_cache:
+    print("💾 Reading in existing cache")
+    with open(f"{cache_folder}/summarized_note_cache.json", 'r') as summarized_note_cache: #TODO pickle or JSON?
+        unordered_note_summaries = json.loads(summarized_note_cache.read()) #MOVING LOGIC TO AFTER CACHE CREATION
+else:
+    print("🦎 Regenerating entire cache")
+    unordered_note_summaries = {}
+
+for note in os.listdir(vault): #TODO test this edge case
+    if is_daily_note(note) and note not in unordered_note_summaries:
+        print(f"🧩 Adding empty entry for {note} (these will be summarized later)")
+        unordered_note_summaries[note] = empty_tag
+
+note_summaries = collections.OrderedDict(sorted(unordered_note_summaries.items()))
+print("📚 Note summary dictionary sorted")
+
+iterator = 0
+for note, summary in note_summaries.items():
+    iterator += 1
+    print(f"\n🦕 Checking note {iterator} out of {len(note_summaries)}")
+    if summary == empty_tag:
+        note_summary = create_note_summary(f"{vault}/{note}", max_note_length)
+#        print("NOTE SUMMARY:, ", note_summary) #DEBUG, delete later
+        note_summaries[note] = note_summary
+    else:
+        print("🕶️ Note summary already present")
+    print("📑", note)
+    print("📝 ", note_summaries[note])
+
+
+
+print("💿 Saving cache")
+json_cache = json.dumps(note_summaries, sort_keys=True, indent=4)
+with open(f"{cache_folder}/summarized_note_cache.json", 'w') as summarized_note_cache:
+    summarized_note_cache.write(json_cache)
+
+print("💾 Reading in newly updated cache")
+with open(f"{cache_folder}/summarized_note_cache.json", 'r') as summarized_note_cache:
+    note_summary_dict = json.loads(summarized_note_cache.read())
+
+
 years = []
 months = []
+print("🪨 Creating Obsidian note of all daily notes and their summaries")
+with open(daily_notes_aggregated, 'w') as dailynote_file:
+    for note in note_summary_dict:
+        if note[0:4] not in years:
+            print(f"🗓️ Adding {note[0:4]}")
+            dailynote_file.write("# {year}\n".format(year = note[0:4]))
+            years.append(note[0:4])
+        if note[0:7] not in months:
+            month = month_writer(note)
+            print(f"Adding {month}")
+            dailynote_file.write("## {month}\n".format(month = month))
+            months.append(note[0:7])
 
-
-with open(footer_path, 'r') as footer_file:
-    footer = footer_file.read()
-
-# daily notes look like this: 2023-01-17.md
-def month_writer(daily_note: str) -> str:
-    month_num = daily_note[5:7]
-    match month_num:
-        case "01":
-            return "January"
-        case "02":
-            return "February"
-        case "03":
-            return "March"
-        case "04":
-            return "April"
-        case "05":
-            return "May"
-        case "06":
-            return "June"
-        case "07":
-            return "July"
-        case "08":
-            return "August"
-        case "09":
-            return "September"
-        case "10":
-            return "October"
-        case "11":
-            return "November"
-        case "12":
-            return "December"
-        case _ :
-            return "Error defining month"
-
-for note in os.listdir(vault):
-    if note[:2] == "20" and note[4] == "-" and note[7] == "-":
-        daily_notes.append(note)
-daily_notes.sort()
-print(daily_notes)
-
-with open(daily_notes_aggregated, 'w') as obsidian_note:
-    for sorted_note in daily_notes: 
-        if sorted_note[0:4] not in years:
-            obsidian_note.write("# {year}\n".format(year = sorted_note[0:4]))
-            years.append(sorted_note[0:4])
-        if sorted_note[0:7] not in months:
-            obsidian_note.write("## {month}\n".format(month = month_writer(sorted_note)))
-            months.append(sorted_note[0:7])
-
-        note_link = "[[{note_link}]]".format(note_link = sorted_note[:-3])
-        print("note link added: ", note_link)
-        obsidian_note.write(note_link)
-        obsidian_note.write("\n")
-    obsidian_note.write(footer)
+        note_link = "[[{note_link}]]".format(note_link = note[:-3])
+        note_path = os.path.join(vault, note)
+        dailynote_file.write(note_link)
+        print("📑 Note Added: ", note_link)
+        dailynote_file.write("\n - ")
+        dailynote_file.write(note_summary_dict[note])
+        print(f"📝 Summary Added:\n{note_summary_dict[note]}")
+        dailynote_file.write("\n")
+print("🍾 Done!")

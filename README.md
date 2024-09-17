@@ -11,6 +11,4 @@ Note that **this project currently uses all hard coded paths** and will have to 
 I recommend **pausing obsidian sync before running this script**
 
 ## To-Do
-- [ ] Get rid of virtual environment
-- [ ] Make portable
-- [ ] Auto install on path
+- [ ] Use a different model for code summary
