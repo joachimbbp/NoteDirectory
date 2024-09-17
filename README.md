@@ -17,7 +17,7 @@ This script currently works reasonably well, but does require some source code m
 
 # Roadmap
 ## Functionality
-- [ ] Add license
+- [x] Add license
 - [ ] Split large notes into sections based on their headers first, then along the lines if still necessary
 - [ ] Use a separate model to summarize code blocks, integrate this sub-summary into the note summary in human language
 - [ ] Cap maximum summary output length
