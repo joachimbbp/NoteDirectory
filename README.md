@@ -12,12 +12,10 @@ I recommend **pausing obsidian sync before running this script**
 
 ## To-Do
 - [ ] add `<` and `>` to sanitized note list
+- [ ] Fix indentation issues
 - [ ] Reintegrate into main python file
 - [ ] Cleanup
-- [ ] Recache, test, push as decent enough for now
+
 - [ ] Check max lengths and reinstate extra long notes
 - [ ] Use a different model for code summary
-
-
-# Thoughts On Summarizer
-- Perhaps we should start by splitting into two sections along the biggest notes, drill down from there?
+- [ ] Cap maximum summary length 
