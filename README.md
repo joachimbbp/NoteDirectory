@@ -1,5 +1,5 @@
 # Daily Note Organizer
-![directory note](readme_media/screenshot.png)
+![directory note](readme_media/screenshot_v2.png)
 The Daily Note Organizer is a Python script designed to organize, aggregate, and summarize [Obsidian](https://obsidian.md/) daily notes in a single directory note (see screenshot above). 
 This script currently works reasonably well, but does require some source code modifications (see *Usage* below). See the *Roadmap* section for planned functionality and interface improvements.
 
