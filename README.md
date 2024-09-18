@@ -8,6 +8,8 @@ This script currently works reasonably well, but does require some source code m
 
 **Instructions**
 - Install and enter the [poetry environment](https://python-poetry.org/) for easy dependency management (optional)
+    - `poetry install`
+    - If in VSCode, select `venv:Poetry` as the Python interpreter in the command pallette 
 - Navigate to `daily_note_org.py` and set the following:
     - If you need to regenerate your entire cache, set `regenerate_entire_cache` to True. Otherwise, keeping it as `False` should have the program only generate summaries for not-yet-summarized notes.
     - Set `max_note_length` to the maximum length of note you want summarized. I have set this to `5000` as I had some very large, somewhat nonsensical notes, that took very long to summarize. Feel free to tune to your liking.

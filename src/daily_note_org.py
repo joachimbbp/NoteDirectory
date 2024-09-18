@@ -5,19 +5,32 @@ import collections
 import json
 
 #Future CLI #TODO
-regenerate_entire_cache = False
+regenerate_entire_cache = True
 max_note_length = 5000
 vault = "/Users/joachimpfefferkorn/Obsidian/Main_Vault"
 
 #TODO Dry these paths, make relative
-daily_notes_aggregated = "/Users/joachimpfefferkorn/Obsidian/Main_Vault/daily_notes.md"
-cache_folder = "/Users/joachimpfefferkorn/repos/daily_note_organizer/cache"
+daily_notes_aggregated = "/Users/joachimpfefferkorn/Obsidian/Main_Vault/Daily Note Directory.md"
+cache_folder = "/Users/joachimpfefferkorn/repos/NoteDirectory/cache"
+cache_filenamename = "summarized_note_cache.json"
+cache_path = f"{cache_folder}/{cache_filenamename}"
 
 empty_tag = "$empty_note_summary$"
 
+
+
+if not os.path.exists(cache_path):
+    if not os.path.exists(cache_folder):
+        print(f"🚧  {cache_folder} not present! Creating directory {cache_folder}")
+        os.mkdir(cache_folder)
+    print(f"🦺 {cache_filenamename} not present in {cache_folder}. Creating {cache_filenamename} and setting `regenerate_entire_cache` to true")
+    c = open(cache_path, "x")
+    c.close()
+    regenerate_entire_cache = True
+
 if not regenerate_entire_cache:
     print("💾 Reading in existing cache")
-    with open(f"{cache_folder}/summarized_note_cache.json", 'r') as summarized_note_cache: #TODO pickle or JSON?
+    with open(cache_path, 'r') as summarized_note_cache: #TODO pickle or JSON?
         unordered_note_summaries = json.loads(summarized_note_cache.read()) #MOVING LOGIC TO AFTER CACHE CREATION
 else:
     print("🦎 Regenerating entire cache")
@@ -48,11 +61,11 @@ for note, summary in note_summaries.items():
 
 print("💿 Saving cache")
 json_cache = json.dumps(note_summaries, sort_keys=True, indent=4)
-with open(f"{cache_folder}/summarized_note_cache.json", 'w') as summarized_note_cache:
+with open(cache_path, 'w') as summarized_note_cache:
     summarized_note_cache.write(json_cache)
 
 print("💾 Reading in newly updated cache")
-with open(f"{cache_folder}/summarized_note_cache.json", 'r') as summarized_note_cache:
+with open(cache_path, 'r') as summarized_note_cache:
     note_summary_dict = json.loads(summarized_note_cache.read())
 
 
