@@ -91,7 +91,7 @@ with open(daily_notes_aggregated, 'w') as dailynote_file:
         dailynote_file.write("\n - ")
         dailynote_file.write(note_summary_dict[note])
         print(f"📝 Summary Added:\n{note_summary_dict[note]}")
-        
+        dailynote_file.write("\n")
     dailynote_file.write("\n# Info\nRegenerate with `/Users/joachimpfefferkorn/repos/NoteDirectory/.venv/bin/python /Users/joachimpfefferkorn/repos/NoteDirectory/src/daily_note_org.py` ")
     #Obviously edit this path for your specific machine.
 print("🍾 Done!")
