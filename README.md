@@ -4,12 +4,17 @@ The Daily Note Organizer is a Python script designed to organize, aggregate, and
 This script currently works reasonably well, but does require some source code modifications (see *Usage* below). See the *Roadmap* section for planned functionality and interface improvements.
 
 # Usage
-**Disclaimer**: I recommend pausing obsidian sync before running this script and possibly keeping a local backup of all your obsidian files. I have not run into any catastrophic errors using this tool, but it is still in development and safety is not guaranteed.
+## Disclaimer
+I recommend pausing obsidian sync before running this script and possibly keeping a local backup of all your obsidian files. I have not run into any catastrophic errors using this tool, but it is still in development and safety is not guaranteed.
 
-**Instructions**
-- Install and enter the [poetry environment](https://python-poetry.org/) for easy dependency management (optional)
+## Instructions
+### Optional Setup
+- Install and enter the [poetry environment](https://python-poetry.org/) for easy dependency management
     - `poetry install`
-    - If in VSCode, select `venv:Poetry` as the Python interpreter in the command pallette 
+    - If in VSCode, select `venv:Poetry` as the Python interpreter in the command pallette
+- For personalized notation, set the paths on line 95 to your specific machine. This info footer is a bit of a hack to hold us over until the CLI and Obsidian plugin.
+
+### Required
 - Navigate to `daily_note_org.py` and set the following:
     - If you need to regenerate your entire cache, set `regenerate_entire_cache` to True. Otherwise, keeping it as `False` should have the program only generate summaries for not-yet-summarized notes.
     - Set `max_note_length` to the maximum length of note you want summarized. I have set this to `5000` as I had some very large, somewhat nonsensical notes, that took very long to summarize. Feel free to tune to your liking.
