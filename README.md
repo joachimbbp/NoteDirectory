@@ -1,3 +1,6 @@
+<a href="https://www.hannahilea.com/blog/houseplant-programming">
+  <img alt="Static Badge" src="https://img.shields.io/badge/%F0%9F%AA%B4%20Houseplant%20-x?style=flat&amp;label=Project%20type&amp;color=1E1E1D">
+</a>
 # Daily Note Organizer
 ![directory note](readme_media/screenshot_v2.png)
 The Daily Note Organizer is a Python script designed to organize, aggregate, and summarize [Obsidian](https://obsidian.md/) daily notes in a single directory note (see screenshot above). 
